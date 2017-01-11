@@ -99,6 +99,36 @@ if dmarc_record:
 
         # Check for SPF/DMARC non-authorsed rejection (No mail)
         if "aspf=s" in p.lower() and spf_allowed_count == 0 and dmarc_policy_reject:
-            print ("\t [!] aspf=s: No email can be sent from the " + args.domain + " domain. No mail servers authorised in SPF and DMARC rejection enabled.")
+            print ("\t[!] aspf=s: No email can be sent from the " + args.domain + " domain. No mail servers authorised in SPF and DMARC rejection enabled.")
         
-        
+        if "rua=" in p.lower():
+            if "mailto:" not in p.lower():
+                print ("\t[!] rua=: Aggregate mail reports will not be sent as incorrect syntax is used. Prepend 'mailto:' before mail addresses.")
+            else:
+                if "," in p:
+                    print ("\t[+] rua=: Aggregate mail reports will be sent to the following email addresses:")
+                    dmarc_mail_list = p.split(",")
+                    for dmarc_rua in dmarc_mail_list:
+                        try:
+                            dmarc_rua = dmarc_rua.split(":")[1]
+                        except:
+                            dmarc_rua = dmarc_rua
+                        print ("\t    - " + dmarc_rua)
+                else:
+                    print ("\t[+] rua=" + p[5:])
+
+        if "ruf=" in p.lower():
+            if "mailto:" not in p.lower():
+                print ("\t[!] ruf=: Mail failure reports will not be sent as incorrect syntax is used. Prepend 'mailto:' before mail addresses.")
+            else:
+                if "," in p:
+                    print ("\t[+] rua=: Mail failure reports will be sent to the following email addresses:")
+                    dmarc_mail_list = p.split(",")
+                    for dmarc_ruf in dmarc_mail_list:
+                        try:
+                            dmarc_ruf = dmarc_ruf.split(":")[1]
+                        except:
+                            dmarc_ruf = dmarc_ruf
+                        print ("\t    - " + dmarc_ruf)
+                else:
+                    print ("\t[+] rua=" + p[5:])
