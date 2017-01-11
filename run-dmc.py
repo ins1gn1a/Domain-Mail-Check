@@ -115,7 +115,7 @@ if dmarc_record:
                             dmarc_rua = dmarc_rua
                         print ("\t    - " + dmarc_rua)
                 else:
-                    print ("\t[+] rua=" + p[5:])
+                    print ("\t[+] rua=" + p[5:] + ": Aggregate mail reports will be sent to this address.")
 
         if "ruf=" in p.lower():
             if "mailto:" not in p.lower():
@@ -131,4 +131,4 @@ if dmarc_record:
                             dmarc_ruf = dmarc_ruf
                         print ("\t    - " + dmarc_ruf)
                 else:
-                    print ("\t[+] rua=" + p[5:])
+                    print ("\t[+] rua=" + p[5:] + ": Failure reports sent to this address.")
