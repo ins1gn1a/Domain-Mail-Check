@@ -43,8 +43,10 @@ print ("[*] Domain: " + args.domain)
 
 # Identify servers/hosts in SPF record 
 allowed_servers = []
+spf_allowed_count = 0
 for item in (spf_record.split(" ")[1:]):
-    if "include" in item or "ip4" in item or "ip6" in item:
+    if "include:" in item or "ip4:" in item or "ip6:" in item or "mx:" in item or "a:" in item or "ptr:" in item:
+        spf_allowed_count += 1 
         allowed_servers.append(item.split(":")[1])
 
 # Process checks against *all
@@ -60,30 +62,43 @@ if spf_record:
             print ("\t    - " + z.split(" ")[0])
     else:
         print ("\t[!] The " + args.domain + " domain is configured in a way that would allow domain email spoofing to be performed.")
+    if "redirect:" in spf_record:
+        print ("\t[!] The redirect modifier is configured within the SPF record.")
 else:
     print ("\t[!] The " + args.domain + " domain does not utilise SPF records for authorising mail servers and is vulnerable to domain email spoofing.")
 
 if dmarc_record:
     print ("    [+] DMARC: " + dmarc_record.split("TXT ")[1])
+    dmarc_policy_reject = False
     dmarc_params = dmarc_record.split(";")
     for p in dmarc_params:
         # Policy checks: reject, none, quarantine
         if " p=quarantine" in p.lower():
             print ("\t[+] p=quarantine: Suspicious emails will be marked as suspected SPAM.")
         elif " p=reject" in p.lower():
-            print ("\t[+] p=reject: Emails that fail DKIM or SPF checks will be rejected.")
+            print ("\t[+] p=reject: Emails that fail DKIM or SPF checks will be rejected. (Strong)")
+            dmarc_policy_reject = True
         elif " p=none" in p.lower():
-            print ("\t[-] p=none: No actions will be performed against emails that have failed DMARC checks.")
+            print ("\t[-] p=none: No actions will be performed against emails that have failed DMARC checks. (Weak)")
 
         # Sender-name (domain/subdomain checks)
         if "adkim=r" in p.lower():
             print ("\t[-] adkim=r (Relaxed Mode): Emails from *." + args.domain + " are permitted.")
         elif "adkim=s" in p.lower():
-            print ("\t[+] adkim=s (Strict Mode): Sender domains must match DKIM mail headers exactly. E.g. if 'd=" + args.domain + "' then emails are not permitted from subdomains.")
+            print ("\t[+] adkim=s (Strict Mode): Sender domains must match DKIM mail headers exactly. E.g. if 'd=" + args.domain + "' then emails are not permitted from subdomains. (Strong)")
 
         # Percentage Check 
         if "pct=" in p.lower():
             percent_val = p.split("=")[1]
             print ("\t[_] pct=" + percent_val + ": " + percent_val + "% of received mail is subject to DMARC processing")
+
+        if "aspf=r" in p.lower():
+            print ("\t[-] aspf=r (Relaxed Mode): Any sub-domain from " + args.domain + " are permitted to match DMARC to SPF records.")
+        elif "aspf=s" in p.lower():
+            print ("\t[+] aspf=s (Strict Mode): The 'header from' domain and SPF must match exactly to pass DMARC checks.")
+
+        # Check for SPF/DMARC non-authorsed rejection (No mail)
+        if "aspf=s" in p.lower() and spf_allowed_count == 0 and dmarc_policy_reject:
+            print ("\t [!] aspf=s: No email can be sent from the " + args.domain + " domain. No mail servers authorised in SPF and DMARC rejection enabled.")
         
         
