@@ -47,10 +47,13 @@ for domain in args.domain:
     # Identify servers/hosts in SPF record 
     allowed_servers = []
     spf_allowed_count = 0
-    for item in (spf_record.split(" ")[1:]):
-        if "include:" in item or "ip4:" in item or "ip6:" in item or "mx:" in item or "a:" in item or "ptr:" in item:
-            spf_allowed_count += 1 
-            allowed_servers.append(item.split(":")[1])
+    try:
+        for item in (spf_record.split(" ")[1:]):
+            if "include:" in item or "ip4:" in item or "ip6:" in item or "mx:" in item or "a:" in item or "ptr:" in item:
+                spf_allowed_count += 1
+                allowed_servers.append(item.split(":")[1])
+    except:
+        print ("[!] Unable to analyse SPF record")
 
     # Process checks against *all
     if spf_record:
