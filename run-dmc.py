@@ -2,6 +2,7 @@
 
 import dns.resolver
 import argparse
+import sys
 
 parser = argparse.ArgumentParser(description='SPF Analyser')
 parser.add_argument('--domain','-d',help='Enter the Domain name to veriify. E.g. ins1gn1a.com',required=True,nargs='+')
@@ -17,9 +18,15 @@ for domain in args.domain:
 
     print ("\n")
 
-    # SPF and Other Checks
-    for txt in dns.resolver.query(domain,'TXT').response.answer:
-        txt_list.append(txt.to_text())
+    try:
+        # SPF and Other Checks
+        for txt in dns.resolver.query(domain,'TXT').response.answer:
+            txt_list.append(txt.to_text())
+    except:
+        domain = domain.split(".", 1)[-1]
+
+        for txt in dns.resolver.query(domain,'TXT').response.answer:
+            txt_list.append(txt.to_text())
 
     txt_list = txt_list[0].split('\n')
 
