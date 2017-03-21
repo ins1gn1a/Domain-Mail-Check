@@ -3,6 +3,7 @@
 import dns.resolver
 import argparse
 import sys
+import tldextract
 
 parser = argparse.ArgumentParser(description='SPF Analyser')
 parser.add_argument('--domain','-d',help='Enter the Domain name to veriify. E.g. ins1gn1a.com',required=True,nargs='+')
@@ -32,7 +33,9 @@ for domain in args.domain:
 
     # DMARC Checks
     try:
-        for txt in dns.resolver.query(("_dmarc." + domain),'TXT').response.answer:
+        extracted = tldextract.extract(domain)
+        tld = "{}.{}".format(extracted.domain, extracted.suffix)
+        for txt in dns.resolver.query(("_dmarc." + tld),'TXT').response.answer:
             temp_dmarc.append(txt.to_text())
         if len(temp_dmarc[0]) > 1:
             txt_list.append(temp_dmarc[0])
