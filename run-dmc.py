@@ -26,8 +26,11 @@ for domain in args.domain:
     except:
         domain = domain.split(".", 1)[-1]
 
-        for txt in dns.resolver.query(domain,'TXT').response.answer:
-            txt_list.append(txt.to_text())
+        try:
+            for txt in dns.resolver.query(tld,'TXT').response.answer:
+                txt_list.append(txt.to_text())
+        except:
+            sys.exit("[!] No TXT records exist for " + tld)
 
     txt_list = txt_list[0].split('\n')
 
