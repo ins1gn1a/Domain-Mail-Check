@@ -24,7 +24,8 @@ for domain in args.domain:
         for txt in dns.resolver.query(domain,'TXT').response.answer:
             txt_list.append(txt.to_text())
     except:
-        domain = domain.split(".", 1)[-1]
+        extracted = tldextract.extract(domain)
+        tld = "{}.{}".format(extracted.domain, extracted.suffix)
 
         try:
             for txt in dns.resolver.query(tld,'TXT').response.answer:
@@ -43,7 +44,7 @@ for domain in args.domain:
         if len(temp_dmarc[0]) > 1:
             txt_list.append(temp_dmarc[0])
     except:
-        print ("[!] Unable to perform DMARC checks - No Domain")
+        print ("[!] No DMARC Policy Set Within _dmarc." + tld)
 
 
     for x in txt_list:
