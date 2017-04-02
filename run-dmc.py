@@ -45,8 +45,7 @@ for domain in args.domain:
     item_xml = SubElement(items_xml, "item", {'ipaddress':'', 'hostname':domain})
     services_xml = SubElement(item_xml,"services")
     service_xml = SubElement(services_xml, "service", {'protocol':'tcp', 'port':'', 'name':''})
-    vulnerabilities_services_xml = SubElement(service_xml,"vulnerabilities")
-    vulnerabilities_xml = SubElement(item_xml, 'vulnerabilities')
+    vulnerabilities_xml = SubElement(service_xml, 'vulnerabilities')
 
     vulnerabilities_array = []
     vuln_review = ""
@@ -209,7 +208,7 @@ for domain in args.domain:
         vuln_info_xml = SubElement(vuln_xml,"information").text = vuln_info
 
     if len(vuln_review) > 0:
-        vuln_xml = SubElement(vulnerabilities_xml, "vulnerability", {'id': full_review})
-        vuln_info_xml = SubElement(vuln_xml, "information").text = vuln_review
+        vuln_xml_review = SubElement(vulnerabilities_xml, "vulnerability", {'id': full_review})
+        vuln_review_info_xml = SubElement(vuln_xml_review, "information").text = vuln_review
 
     xml_file_write((tostring(items_xml, encoding='utf8', method='xml').decode('utf-8')))
