@@ -91,7 +91,7 @@ for domain in args.domain:
                 txt_list.append(temp_dmarc[0])
 
     except:
-        print ("[!] No DMARC Policy Set Within _dmarc." + dmarc_domain)
+        vuln_review = vuln_review + vuln_append_print("[!] No DMARC Policy Set Within '_dmarc." + dmarc_domain + "'")
         vulnerabilities_array.append([no_dmarc, "There were no DMARC records found within the TXT entries for '_dmarc." + dmarc_domain + "'. Implementing DMARC alongside SPF would provide granular control for the management and monitoring of email spoofing. " + dmarc_tld_check])
 
 
@@ -115,7 +115,7 @@ for domain in args.domain:
                 spf_allowed_count += 1
                 allowed_servers.append(item.split(":")[1])
     except:
-        print ("[!] Unable to analyse SPF record")
+        vuln_review = vuln_review + vuln_append_print("[!] Unable to analyse SPF record  for '" + domain + "'.")
 
     # Process checks against *all
     if spf_record:
@@ -133,7 +133,7 @@ for domain in args.domain:
         if "redirect:" in spf_record:
             vuln_review = vuln_review + vuln_append_print("\t[!] The redirect modifier is configured within the SPF record.")
     else:
-        print ("\t[!] The " + domain + " domain does not utilise SPF records for authorising mail servers and is vulnerable to domain email spoofing.")
+        vuln_review = vuln_review + vuln_append_print("\t[!] The " + domain + " domain does not utilise SPF records for authorising mail servers and is vulnerable to domain email spoofing.")
         vulnerabilities_array.append([no_spf, "There were no SPF (Sender Policy Framework) entries found within the TXT records for '" + domain + "'. The domain '" + domain + "' was therefore vulnerable to domain email spoofing."])
 
     if dmarc_record:
