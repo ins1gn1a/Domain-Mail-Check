@@ -133,7 +133,7 @@ for domain in args.domain:
             vuln_review = vuln_review + vuln_append_print("\t[!] The " + domain + " domain is configured in a way that would allow domain email spoofing to be performed.")
             spf_spoofing = "The domain " + domain + " was found to not have a secure SPF record configured, and as such it would be possible to spoof emails from the organisation (e.g. user.name@" + domain + "). The SPF record was set as the following:\n"
             spf_spoofing = spf_spoofing + "- " + str(spf_record.rstrip())
-            vulnerabilities_array.append([no_spf, spf_spoofing)
+            vulnerabilities_array.append([weak_spf, spf_spoofing)
         if "redirect:" in spf_record:
             vuln_review = vuln_review + vuln_append_print("\t[!] The redirect modifier is configured within the SPF record.")
     else:
