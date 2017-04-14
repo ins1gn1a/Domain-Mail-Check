@@ -13,12 +13,12 @@ no_dmarc = "SC-2166"
 no_spf = "SC-2090"
 full_review = "SC-2157"
 weak_dmarc = "SC-"
-weak_spf = "SC-1984"
+weak_spf = "SC-2183"
 
 ET = ElementTree()
 items_xml = Element('items')
 items_xml.set('version',version)
-items_xml.set('source','Domain Mail Check')
+items_xml.set('source','SureFormat')
 
 current_time = strftime("dmc-result_%H-%M-%S_%d-%m-%Y", gmtime())
 
