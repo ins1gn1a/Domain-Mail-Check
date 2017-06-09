@@ -1,2 +1,2 @@
-tldextract
-dnspython
+pip3 install tldextract
+pip3 install dnspython
