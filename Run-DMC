@@ -195,7 +195,7 @@ for domain in args.domain:
                     vuln_review = vuln_review + vuln_append_print("\t[!] ruf=: Mail failure reports will not be sent as incorrect syntax is used. Prepend 'mailto:' before mail addresses.")
                 else:
                     if "," in p:
-                        vuln_review = vuln_review + vuln_append_print("\t[+] rua=: Mail failure reports will be sent to the following email addresses:")
+                        vuln_review = vuln_review + vuln_append_print("\t[+] ruf=: Mail failure reports will be sent to the following email addresses:")
                         dmarc_mail_list = p.split(",")
                         for dmarc_ruf in dmarc_mail_list:
                             try:
@@ -204,7 +204,7 @@ for domain in args.domain:
                                 dmarc_ruf = dmarc_ruf
                             vuln_review = vuln_review + vuln_append_print("\t    - " + dmarc_ruf)
                     else:
-                        vuln_review = vuln_review + vuln_append_print("\t[+] rua=" + p[5:] + ": Failure reports sent to this address.")
+                        vuln_review = vuln_review + vuln_append_print("\t[+] ruf=" + p[5:] + ": Failure reports sent to this address.")
 
 
     for vulnerability_data in vulnerabilities_array:
