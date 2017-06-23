@@ -6,8 +6,9 @@ import sys
 import tldextract
 from xml.etree.ElementTree import *
 from time import gmtime, strftime
+import re
 
-version = "1.1"
+version = "1.2"
 
 no_dmarc = "SC-2166"
 no_spf = "SC-2090"
@@ -110,17 +111,25 @@ for domain in args.domain:
     # Identify servers/hosts in SPF record 
     allowed_servers = []
     spf_allowed_count = 0
+    spf_txt = spf_record
     try:
-        for item in (spf_record.split(" ")[1:]):
+        # contatenate long entries (TXT records are max 255 chars)
+        spf_txt = spf_txt[ spf_txt.find( "TXT " ) +4: ]
+        if len(spf_txt) > 257:
+            spf_txt = re.sub( '"\s+"', "", spf_txt )
+        for item in (spf_txt.split(" ")):
             if "include:" in item or "ip4:" in item or "ip6:" in item or "mx:" in item or "a:" in item or "ptr:" in item:
                 spf_allowed_count += 1
                 allowed_servers.append(item.split(":")[1])
+            if item == "mx":
+                spf_allowed_count += 1
+                allowed_servers.append( "MX-servers" )
     except:
         vuln_review = vuln_review + vuln_append_print("[!] Unable to analyse SPF record  for '" + domain + "'.")
 
     # Process checks against *all
     if spf_record:
-        vuln_review = vuln_review + vuln_append_print("    [+] SPF: " + spf_record.split("TXT ")[1])
+        vuln_review = vuln_review + vuln_append_print("    [+] SPF: " + spf_txt )
         if "-all" in spf_record:
             vuln_review = vuln_review + vuln_append_print("\t[+] Only the following mail servers are authorised to send mail from the " + domain + " domain:")
             for z in allowed_servers:
@@ -186,7 +195,7 @@ for domain in args.domain:
                                 dmarc_rua = dmarc_rua.split(":")[1]
                             except:
                                 dmarc_rua = dmarc_rua
-                                vuln_review = vuln_review + vuln_append_print("\t    - " + dmarc_rua)
+                            vuln_review = vuln_review + vuln_append_print("\t    - " + dmarc_rua)
                     else:
                         vuln_review = vuln_review + vuln_append_print("\t[+] rua=" + p[5:] + ": Aggregate mail reports will be sent to this address.")
 
