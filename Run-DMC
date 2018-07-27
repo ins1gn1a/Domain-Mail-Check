@@ -10,11 +10,11 @@ import re
 
 version = "1.2"
 
-no_dmarc = "SC-2166"
-no_spf = "SC-2090"
-full_review = "SC-2157"
-weak_dmarc = "SC-"
-weak_spf = "SC-2183"
+no_dmarc = "ID1"
+no_spf = "ID2"
+full_review = "ID3"
+weak_dmarc = "ID4"
+weak_spf = "ID5"
 
 ET = ElementTree()
 items_xml = Element('items')
